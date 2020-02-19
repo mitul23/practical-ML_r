@@ -383,8 +383,92 @@ list.files() - to list all the files in the directory</p>
 url &lt;- &quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD&quot;
 download.file(url, destfile=&quot;data/cameras.csv&quot;, method=&quot;curl&quot;)
 dateDownloded &lt;- date()
-dateDownloded</code></pre>
-<pre><code>## [1] &quot;Wed Feb 19 10:45:07 2020&quot;</code></pre>
+print(dateDownloded)</code></pre>
+<pre><code>## [1] &quot;Wed Feb 19 11:53:13 2020&quot;</code></pre>
+<pre class="r"><code>camdata &lt;- read.table(&quot;data/cameras.csv&quot;, sep=&quot;,&quot;, header = T)
+print(head(camdata))</code></pre>
+<pre><code>##                                     address direction          street
+## 1                GARRISON BLVD &amp; WABASH AVE       E/B     Garrison \n
+## 2                    HILLEN ST &amp; FORREST ST       W/B       Hillen \n
+## 3               EDMONDSON AVE &amp; N ATHOL AVE       E/B      Edmonson\n
+## 4                    YORK RD &amp; GITTINGS AVE       S/B      York Rd \n
+## 5                 RUSSELL ST &amp; W HAMBURG ST       S/B       Russell\n
+## 6 S MARTIN LUTHER KING JR BLVD &amp; W PRATT ST       S/B MLK Jr. Blvd \n
+##      crossStreet                 intersection              Location.1
+## 1     Wabash Ave     Garrison \n &amp; Wabash Ave (39.341209, -76.683117)
+## 2     Forrest St       Hillen \n &amp; Forrest St  (39.29686, -76.605532)
+## 3 Woodbridge Ave Edmonson\n  &amp; Woodbridge Ave (39.293453, -76.689391)
+## 4    Gitting Ave     York Rd \n &amp; Gitting Ave (39.370493, -76.609812)
+## 5     Hamburg St      Russell\n  &amp; Hamburg St (39.279819, -76.623911)
+## 6       Pratt St   MLK Jr. Blvd \n &amp; Pratt St (39.286027, -76.627846)
+##   X2010.Census.Neighborhoods X2010.Census.Wards.Precincts Zip.Codes
+## 1                        252                           63     27295
+## 2                        179                          108     13645
+## 3                        213                           75     27950
+## 4                         37                          270     14009
+## 5                        250                          178     27953
+## 6                         11                          168     27953</code></pre>
+<pre class="r"><code># excel file
+url2 &lt;- &quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD&quot;
+download.file(url2, destfile=&quot;data/cameras.xlsx&quot;, method=&quot;curl&quot;)
+dateDownloded &lt;- date()
+print(dateDownloded)</code></pre>
+<pre><code>## [1] &quot;Wed Feb 19 11:53:14 2020&quot;</code></pre>
+<pre class="r"><code># library(xlsx); read.xlsx(data, sheetIndex, header)
+
+# XML file
+library(XML)
+url3 &lt;- &quot;https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Frestaurants.xml&quot;
+doc &lt;- xmlTreeParse(sub(&quot;s&quot;, &quot;&quot;, url3), useInternalNodes = TRUE)
+rootNode &lt;- xmlRoot(doc)
+print(xmlName(rootNode))</code></pre>
+<pre><code>## [1] &quot;response&quot;</code></pre>
+<pre class="r"><code>print(names(rootNode))</code></pre>
+<pre><code>##   row 
+## &quot;row&quot;</code></pre>
+<pre class="r"><code>print(rootNode[[1]][[1]][[1]])</code></pre>
+<pre><code>## &lt;name&gt;410&lt;/name&gt;</code></pre>
+<pre class="r"><code>print(xmlSApply(rootNode[[1]][[1]], xmlValue))</code></pre>
+<pre><code>##            name         zipcode    neighborhood councildistrict  policedistrict 
+##           &quot;410&quot;         &quot;21206&quot;     &quot;Frankford&quot;             &quot;2&quot;  &quot;NORTHEASTERN&quot; 
+##      location_1 
+##              &quot;&quot;</code></pre>
+<pre class="r"><code>url4 &lt;- &quot;https://www.espn.com/nfl/team/_/name/bal/baltimore-ravens&quot;
+doc = htmlParse(url4, useInternalNodes = T)
+scores = xpathSApply(doc, &quot;//li[@class='score']&quot;, xmlValue)
+print(scores)</code></pre>
+<pre><code>## list()</code></pre>
+<pre class="r"><code>teams = xpathSApply(doc, &quot;//li[@class='team-name']&quot;, xmlValue)
+print(teams)</code></pre>
+<pre><code>## list()</code></pre>
+<pre class="r"><code># data.table
+library(data.table)
+df = data.table(x=rnorm(9), y = rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;), each=3),z=rnorm(9))
+print(head(df,3))</code></pre>
+<pre><code>##             x y          z
+## 1: -0.6232540 a  0.8984944
+## 2:  2.9099649 a -0.3488921
+## 3:  0.5762769 a  0.1200319</code></pre>
+<pre class="r"><code>df[2,] # row = 2</code></pre>
+<pre><code>##           x y          z
+## 1: 2.909965 a -0.3488921</code></pre>
+<pre class="r"><code>df[df$y=='a']</code></pre>
+<pre><code>##             x y          z
+## 1: -0.6232540 a  0.8984944
+## 2:  2.9099649 a -0.3488921
+## 3:  0.5762769 a  0.1200319</code></pre>
+<pre class="r"><code>df[c(2,3)]  # row=2,3</code></pre>
+<pre><code>##            x y          z
+## 1: 2.9099649 a -0.3488921
+## 2: 0.5762769 a  0.1200319</code></pre>
+<pre class="r"><code>df[,w:=z^2]
+df[, table(y)]</code></pre>
+<pre><code>## y
+## a b c 
+## 3 3 3</code></pre>
+<pre class="r"><code>df[, list(mean(x), sum(x))]</code></pre>
+<pre><code>##           V1       V2
+## 1: 0.1745135 1.570621</code></pre>
 </div>
 
 

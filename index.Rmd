@@ -9,11 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ### Week 1
+
 getwd(); setwd() - working directory \
 file.exists() - check if the directory exists \
 dir.create() - create a directory \
 download.file(url, destfile, method="curl") - download data from the web \
 list.files() - to list all the files in the directory
+
 ```{r warning=FALSE}
 if (!file.exists("data")){
   dir.create("data")
@@ -22,6 +24,42 @@ if (!file.exists("data")){
 url <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
 download.file(url, destfile="data/cameras.csv", method="curl")
 dateDownloded <- date()
-dateDownloded
+print(dateDownloded)
+camdata <- read.table("data/cameras.csv", sep=",", header = T)
+print(head(camdata))
+
+# excel file
+url2 <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD"
+download.file(url2, destfile="data/cameras.xlsx", method="curl")
+dateDownloded <- date()
+print(dateDownloded)
+# library(xlsx); read.xlsx(data, sheetIndex, header)
+
+# XML file
+library(XML)
+url3 <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Frestaurants.xml"
+doc <- xmlTreeParse(sub("s", "", url3), useInternalNodes = TRUE)
+rootNode <- xmlRoot(doc)
+print(xmlName(rootNode))
+print(names(rootNode))
+print(rootNode[[1]][[1]][[1]])
+print(xmlSApply(rootNode[[1]][[1]], xmlValue))
+url4 <- "https://www.espn.com/nfl/team/_/name/bal/baltimore-ravens"
+doc = htmlParse(url4, useInternalNodes = T)
+scores = xpathSApply(doc, "//li[@class='score']", xmlValue)
+print(scores)
+teams = xpathSApply(doc, "//li[@class='team-name']", xmlValue)
+print(teams)
+
+# data.table
+library(data.table)
+df = data.table(x=rnorm(9), y = rep(c("a","b","c"), each=3),z=rnorm(9))
+print(head(df,3))
+df[2,] # row = 2
+df[df$y=='a']
+df[c(2,3)]  # row=2,3
+df[,w:=z^2]
+df[, table(y)]
+df[, list(mean(x), sum(x))]
 ```
 
