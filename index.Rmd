@@ -62,4 +62,25 @@ df[,w:=z^2]
 df[, table(y)]
 df[, list(mean(x), sum(x))]
 ```
+### Week 2
+
+```{r}
+# mySQL
+library(RMySQL)
+ucscDb<- dbConnect(MySQL(), user="genome", host="genome-mysql.soe.ucsc.edu")
+result <- dbGetQuery(ucscDb, "show databases")
+dbDisconnect(ucscDb)
+
+hg19<- dbConnect(MySQL(), user="genome", db="hg19", host="genome-mysql.soe.ucsc.edu")
+result <- dbListTables(hg19)
+length(result)
+result[1:5]
+dbListFields(hg19, "affyU133Plus2") # for a specific table
+dbGetQuery(hg19, "select count(*) from affyU133Plus2")
+affyData <- dbReadTable(hg19, "affyU133Plus2")
+head(affyData)
+query <- dbSendQuery(hg19, "select * from affyU133Plus2 where misMatches between 1 and 3")
+affyMis <- fetch(query, n=10); quantile(affyMis$misMatches)
+dbDisconnect(hg19)
+```
 
